@@ -1,11 +1,20 @@
 # MERN Demo (MongoDB, Express.js, React.js, and Node.js)
 
 Here is a list of steps we are going through this demo:
-- [ ] [Setting up The Server](#Setting-up-the-server)
-- [ ] [Routing in Express](#Routing-in-Express)
-- [ ] [REST API - Round One](#REST-API---Round-One)
-- [ ] [MongoDB and REST API - Round Two](#MongoDB-and-REST-API---Round-Two)
-- [ ] [React and REST API - Round Three](#React-and-REST-API---Round-Three)
+Table of Contents
+=================
+
+* [MERN Demo (MongoDB, Express.js, React.js, and Node.js)](#mern-demo-mongodb-expressjs-reactjs-and-nodejs)
+   * [Check out the complete server code <a href="./server/server.js">here</a> and client code <a href="./client/">here</a>.](#check-out-the-complete-server-code-here-and-client-code-here)
+* [Setting up The Server](#setting-up-the-server)
+* [Routing in Express](#routing-in-express)
+* [REST API - Round One](#rest-api---round-one)
+   * [GET request from our server to external server &amp; Parsing the JSON response](#get-request-from-our-server-to-external-server--parsing-the-json-response)
+   * [Handle a POST request to our server &amp; Using the body parser](#handle-a-post-request-to-our-server--using-the-body-parser)
+* [MongoDB and REST API - Round Two](#mongodb-and-rest-api---round-two)
+* [JS filter and map and REST API - Round Three](#js-filter-and-map-and-rest-api---round-three)
+   * [to get only the temperature of a specific city.](#to-get-only-the-temperature-of-a-specific-city)
+* [React and REST API - Round Four [Optional]](#react-and-rest-api---round-four-optional)
 
 ---
 Check out the complete server code [here](./server/server.js) and client code [here](./client/).
@@ -69,18 +78,21 @@ found 0 vulnerabilities
 - change the entry point to `server.js` in the `package.josn` file. This the home page of the server when it the http://localhost:port url s requested.  
 
 - [[Source]](https://expressjs.com/en/5x/api.html#express) Create an Express.js application by copying these two line
-```
+
+```js
 const express = require('express')
 const app = express()
 ```
 into your server.js .
 
 - [[Source]](https://expressjs.com/en/5x/api.html#app.listen) Assign port 5000 to the server using the following code:
-```
+
+```js
 app.listen(5000)
 ```
 **OR** even better, add a call back function as a second argument to the previous `listen` function so we can print out any errors on the run time:
-```
+
+```js
 app.listen(5000, function(err){
   if(err) console.log(err);
   })
@@ -96,7 +108,7 @@ We will fix the server to accept GET request soon 😉.
 
 - You may now add a handle for GET requests:
 
-```
+```js
 app.get('/', function (req, res) {
   res.send('GET request to homepage')
 })
@@ -108,15 +120,11 @@ The second argument is a call function the will hold the `req` variable for the 
 You may even embed HTML in your response's string.
 
 ---
-- [x] [Setting up The Server](#Setting-up-the-server)
-- [ ] [Routing in Express](#Routing-in-Express)
-- [ ] [REST API - Round One](#REST-API---Round-One)
-- [ ] [MongoDB and REST API - Round Two](#MongoDB-and-REST-API---Round-Two)
-- [ ] [React and REST API - Round Three](#React-and-REST-API---Round-Three)
----
+
 # Routing in Express
 So far we had one route to our server. Namely, the '/' route. If we want clients to visit other ~~pages~~ routes, we can handle these requests in such a way:
-```
+
+```js
 app.get('/contact', function (req, res) {
   res.send('Hi there, here is my <a href="mailto:nabil@eceubc.ca"> email </a>.')
 })
@@ -125,25 +133,22 @@ app.get('/contact', function (req, res) {
 Output:
 
 ![server replying to another route](images/3.jpg)  
----
-- [x] [Setting up The Server](#Setting-up-the-server)
-- [x] [Routing in Express](#Routing-in-Express)
-- [ ] [REST API - Round One](#REST-API---Round-One)
-- [ ] [MongoDB and REST API - Round Two](#MongoDB-and-REST-API---Round-Two)
-- [ ] [React and REST API - Round Three](#React-and-REST-API---Round-Three)
----
+
+
 # REST API - Round One
 > [[Source]](https://rapidapi.com/blog/most-popular-api/) API stands for Application Programming Interface and allows your application to interact with an external service using a simple set of commands.
 
 out of 10,000 APIs out there in the wild, we will be interacting with the [[openweathermap]](https://openweathermap.org/api) API to get weather and weather forecasts for multiple cities. Our Express server will act as client in this interaction. [REST](https://en.wikipedia.org/wiki/Representational_state_transfer) stands for Representational state transfer which is an architectural stateless style to make designing web apps more scalable and secure.  
 - Create a free account on [[openwathermap]](https://openweathermap.org/price) website.
 - [[API call guide]](https://openweathermap.org/current) Using your API key, test an API call by pasting this link into the browser, replacing the API key with yours:
+
 ```
 api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
 ```
 ![an API call](images/4.jpg)
 Here is the formatted JSON reply from the API server([[Using pretty-json package in Atom]](https://atom.io/packages/pretty-json)):
-```
+
+```json
 {
   "coord": {
     "lon": -123.1193,
@@ -192,7 +197,7 @@ Here is the formatted JSON reply from the API server([[Using pretty-json package
 ## GET request from our server to external server & Parsing the JSON response
 With the help [[HTTPS module]](https://nodejs.org/api/https.html#https_https_get_url_options_callback) in Node.js we will make a GET request to this API to get Vancouver weather.
 
-```
+```js
 const https = require('https');
 
 app.get("/", function(req, res) {
@@ -226,7 +231,7 @@ Now, we want to enable the user to enter a city name and get live weather data f
 
 - First, we will be changing the `app.get('/')` to return an html file instead of an html code and move the previous code in `app.get('/')` to `app.post('/')` as such:
 
-```
+```js
 app.get('/', function(req, res) {
   res.sendFile(__dirname + "/index.html");
 })
@@ -253,7 +258,7 @@ app.post("/", function(req, res) {
 ```
 Notice how we are sending now `index.html` file back to the browser client whenever it sends a GET for the root directory of our web server. Here is the content of `index.html`:
 
-```
+```html
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -280,7 +285,8 @@ Once the user hit button, a POST request will be send to our server and will be 
 
 - Next, we need to parse the POST request using [`body-parser`](https://www.npmjs.com/package/body-parser) module. It allows us to use the property `req.body` to get the entered city name.
 copy the next lines at the begining of `server.js`:
-```
+
+```js
 const bodyparser = require("body-parser");
 app.use(bodyparser.urlencoded({
   extended: true
@@ -289,42 +295,42 @@ app.use(bodyparser.urlencoded({
 check out [[https://www.npmjs.com/package/body-parser]](https://www.npmjs.com/package/body-parser) for full documentation of this module/middleware.
 
 - Finally, add the API key from your openweathermap account page.
-```
+
+```js
 const apikey = "b660f3402c54cb9a9c48f89c35249e5c";
 ```
 run `http://localhost:5000` on your server and Voila!
 [Check out the code at this stage](https://github.com/nabil828/mern_demo/tree/e67c18b706c68bb03b9ded771ae29549836ff882) .
 
----
-- [x] [Setting up The Server](#Setting-up-the-server)
-- [x] [Routing in Express](#Routing-in-Express)
-- [x] [REST API - Round One](#REST-API---Round-One)
-- [ ] [MongoDB and REST API - Round Two](#MongoDB-and-REST-API---Round-Two)
-- [ ] [React and REST API - Round Three](#React-and-REST-API---Round-Three)
----
+
 # MongoDB and REST API - Round Two
 Before talking about the other REST operations, namely PUT and DELETE, let us build a database on our server to serve such requests. Now, we want to build our own weather service and not make any calls to openwathermap.
 
 - First, let us install mongodb using our terminal
+
 ```
 sudo apt-get install mongodb
 ```  
 and run the mongodb service Using
+
 ```
 sudo service mongodb start
 ```
 and log in to the database terminal using
+
 ```
 $ mongo
 ```
 command.
 
 - Next, create and use `test` db using
+
 ```
 use test
 ```
 and create and populate `cities` collection using
-```
+
+```js
 > db.cities.insert([{name:'Vancouver', tempreture:25.5, description:'hot'},{name:'Tokyo', tempreture:39.5, description:'scorching'},{name:'Paris', tempreture:'19', description:'cloudy'}]);
 BulkWriteResult({
         "writeErrors" : [ ],
@@ -359,7 +365,8 @@ BulkWriteResult({
 Now the database is created and running. We now need to access it through the Express server.
 
 - Install [`mongoose`](https://mongoosejs.com/docs/) module to enable us to access mongodb from the server code.
-```
+
+```js
 const mongoose = require('mongoose');
 
 mongoose.connect("mongodb://localhost:27017/test",
@@ -376,7 +383,8 @@ The `mongoose.connect` function call will establish the connection to the db. Th
 - Now moving to the fun part. Let us add these *routes* in the server code to match, a GET(retrieve all), GET(retrieve one), POST(insert one), PUT(update one), & DELETE(delete all/one) requests.  
 
 Something along these lines:
-```
+
+```js
 app.use(bodyParser.json());
 
 app.get('/cities', (req, res) => {
@@ -405,7 +413,8 @@ app.delete('/cities/:name', (req, res) => {
 Note how these REST API calls will match the SELECT, INSERT, UPDATE, & DELETE statements. Also, notice how do we retrieve the city name from URL route using the `req.params` [[Source]](https://stackoverflow.blog/2020/03/02/best-practices-for-rest-api-design/).
 
 Here are the routes I implemented:
-```
+
+```js
 app.get('/cities/:city_name', function(req, res) {
   console.log("received a request for "+ req.params.city_name);
   cityModel.find({name: req.params.city_name}, function(err, cities){
@@ -434,7 +443,7 @@ This will enable the client for example to list all cities and browse a city by 
 
 - To save time in building front-end HTML forms to trigger `app.put("/insert")` & `app.delete("/delete")` to matching the following routes:
 
-```
+```js
 app.put("/insert", function(req, res){
   cityModel.create({
     name : req.body.name,
@@ -462,14 +471,83 @@ app.delete("/delete/:city_name", function(req, res){
 
 ![insert delete](images/3.gif)
 Check the status of the [code](https://github.com/nabil828/mern_demo/tree/b24a6704d141f6c7fb72dd03f5efee3e58f6e133) at this stage.
+
+--
+
+# JS filter and map and REST API - Round Three
+Create `data.js` file to have the following data:
+
+```js
+json_cities = {
+    "list": [
+        {
+            "name": "Vancouver",
+            "tempreture": 25.5,
+            "description": "hot"
+        },
+        {
+            "name": "Tokyo",
+            "tempreture": 39.5,
+            "description": "scorching"
+        },
+        {
+            "name": "Paris",
+            "tempreture": "19",
+            "description": "cloudy"
+        }
+    ]
+}
+
+module.exports = json_cities
+```
+Try out the following routes
+
+```js
+json_cities = require('./data.js');
+
+app.get('/cities_from_json_file', function (req, res) {
+  res.send(json_cities.list);
+})
+
+```
+to get all the cirties.
+
+And
+
+```js
+
+app.get('/cities_from_json_file/:city_name', function (req, res) {
+
+  res.send(json_cities.list.filter(function(i_){
+    return i_.name == req.params.city_name;
+  }));
+
+})
+
+```
+to get the weather for a specific city.
+
+and
+
+```js
+function map_f(i_) {
+  return i_["tempreture"]
+
+}
+app.get('/cities_from_json_file/:city_name', function (req, res) {
+
+  res.send(json_cities.list.filter(function(i_){
+    return i_.name == req.params.city_name;
+  }).map(map_f));
+
+})
+
+```
+to get only the temperature of a specific city.
+
 ---
-- [x] [Setting up The Server](#Setting-up-the-server)
-- [x] [Routing in Express](#Routing-in-Express)
-- [x] [REST API - Round One](#REST-API---Round-One)
-- [x] [MongoDB and REST API - Round Two](#MongoDB-and-REST-API---Round-Two)
-- [ ] [React and REST API - Round Three](#React-and-REST-API---Round-Three)
----
-# React and REST API - Round Three [Optional]
+
+# React and REST API - Round Four [Optional]
 Now our server is ready to serve but what about our client. So far we had been testing the server by mostly entering the routes directly in the browser for GET requests and using Postman for the PUT & DELETE.
 
 We will create a simple client interface using [React.js](https://reactjs.org/) to get client like the following:
@@ -479,6 +557,7 @@ We will create a simple client interface using [React.js](https://reactjs.org/) 
 by clicking on these two react links, each city weather is going to be loaded into the page without the page getting reloaded. All the magic will happen in the background. React will contact the Express server and retrieve the weather of the selected city.
 
 - [[Source]](https://reactjs.org/docs/create-a-new-react-app.html) First, we need to create another directory by executing the following:
+
 ```
 npx create-react-app client
 cd client
@@ -820,12 +899,6 @@ Mmm.. and that is it I guess. Please let me know if you have any questions!
 <br>
 More Sources: [1](http://forum.espruino.com/conversations/1364/)
 
----
-- [x] [Setting up The Server](#Setting-up-the-server)
-- [x] [Routing in Express](#Routing-in-Express)
-- [x] [REST API - Round One](#REST-API---Round-One)
-- [x] [MongoDB and REST API - Round Two](#MongoDB-and-REST-API---Round-Two)
-- [x] [React and REST API - Round Three [Optional]](#React-and-REST-API---Round-Three)
 ---
 
 <!-- ## Check Your Understanding
