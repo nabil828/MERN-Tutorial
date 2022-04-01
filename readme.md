@@ -1,6 +1,6 @@
 # MERN Demo (MongoDB, Express.js, React.js, and Node.js)
 
-Here is a list of steps we are going through this demo:
+Here is a list of steps we are going through this Tutorial:
 Table of Contents
 =================
 
