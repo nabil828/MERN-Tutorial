@@ -134,6 +134,11 @@ Output:
 
 ![server replying to another route](images/3.jpg)  
 
+Use the following to add `./public` folder for  static assets in your site.
+
+```js
+app.use(express.static('./public'));
+````
 
 # REST API - Round One
 > [[Source]](https://rapidapi.com/blog/most-popular-api/) API stands for Application Programming Interface and allows your application to interact with an external service using a simple set of commands.
